@@ -1,6 +1,6 @@
 // Library Imports
 const express = require("express")
-const {uuid:v4} = require("uuid")
+const {v4:uuidv4} = require("uuid")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
 const {Pool} = require('pg')
@@ -50,7 +50,7 @@ app.listen(HTTP_PORT,(err)=>{
  * GET /home
  * Gets the home page of the app
  */
-//TODO
+//TODO Create Route 
 app.get("/home",async (req,res)=>{
 
 })
@@ -60,7 +60,7 @@ app.get("/home",async (req,res)=>{
  * Gets the user's individual home page
  * Auth JWT
  */
-//TODO
+//TODO Create Route 
 app.get("/user-home",async (req,res)=>{
     //Maybe database stuff
 })
@@ -69,9 +69,22 @@ app.get("/user-home",async (req,res)=>{
  * POST /user
  * Creates a user in the database
  */
-//TODO
+//TODO Create Route 
 app.post("/user",async (req,res)=>{
     // INSERT INTO tblUsers VALUES()
+    try{
+        let username = req.body.username
+        let password = req.body.password
+        password = bcrypt.hashSync(password,10)
+        let troop = req.body.troop
+        let email = req.body.email
+        let firstName = req.body.firstName
+        let userID = uuidv4()
+        const _ = await pool.query("INSERT INTO tblUsers VALUES($1,$2,$3,$4,$5,$6)",[userID,username,password,troop,email,firstName])
+        res.status(201).json({"status":"success","message":"Successfully Added User"})
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
 })
 
 /**
@@ -79,7 +92,7 @@ app.post("/user",async (req,res)=>{
  * Updates a user in the database
  * Auth JWT
  */
-//TODO
+//TODO Create Route 
 app.put("/user",async (req,res)=>{
 
 })
@@ -89,7 +102,7 @@ app.put("/user",async (req,res)=>{
  * Gets the details for the user tied to the JWT token
  * AUTH JWT
  */
-//TODO
+//TODO Create Route 
 app.get("/user",async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
 })
@@ -98,7 +111,7 @@ app.get("/user",async (req,res)=>{
  * POST /authenticate
  * Logs the user in and issues a JWT
  */
-//TODO
+//TODO Create Route 
 app.post("/authenticate",async (req,res) =>{
     // Middleware >_<
 })
@@ -129,7 +142,7 @@ app.get("/user/public", async (req,res)=>{
  * Adds points to the user who is scanning
  * Auth JWT
  */
-//TODO
+//TODO Create Route 
 app.post("/points",async (req,res)=>{
     //Create a new updated points total
     //SELECT Points FROM tblUserPointValues
@@ -145,7 +158,7 @@ app.post("/points",async (req,res)=>{
  * GET /points
  * Gets the total points for a user
  */
-//TODO
+//TODO Create Route 
 app.get("/points",async (req,res)=>{
     // SELECT Points from tblUserPoints WHERE UserID = UserID
 
@@ -192,7 +205,7 @@ app.get("/leaderboard/topx", async (req,res)=>{
  * Gets the position of a user on the leaderboard
  * Auth JWT
  */
-//TODO
+//TODO Create Route 
 app.get("/leaderboard/position", async (req,res)=>{
     //SELECT Username FROM tblUsers ORDER BY PointTotal
     //Itterate through all of that and output the count in the provided array to output everything
