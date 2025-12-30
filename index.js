@@ -113,7 +113,12 @@ app.get("/user",async (req,res)=>{
  */
 //TODO Create Route 
 app.post("/authenticate",async (req,res) =>{
-    // Middleware >_<
+    try{
+        let username = req.body.userName
+        let password = req.body.password
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
 })
 
 /**
