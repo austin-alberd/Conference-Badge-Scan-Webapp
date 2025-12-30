@@ -79,8 +79,11 @@ app.post("/user",async (req,res)=>{
         let troop = req.body.troop
         let email = req.body.email
         let firstName = req.body.firstName
+        let userPointValue = req.body.userPointValue
         let userID = uuidv4()
         const _ = await pool.query("INSERT INTO tblUsers VALUES($1,$2,$3,$4,$5,$6)",[userID,username,password,troop,email,firstName])
+        const __ = await pool.query("INSERT INTO tblUserPointValues VALUES($1,$2,$3)",[uuidv4(),userID,userPointValue])
+        const ___ = await pool.query("INSERT INTO tblUserPointTotals VALUES($1,$2,$3)",[uuidv4(),userID,0])
         res.status(201).json({"status":"success","message":"Successfully Added User"})
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
@@ -131,7 +134,7 @@ app.get("/user/public", async (req,res)=>{
     //
     try{
         let userID = req.query.userid
-        const {rows} = await pool.query("SELECT firstname, email, troop FROM tblUsers WHERE UserID = $1",[userID])
+        const {rows} = await pool.query("SELECT first_name, email, troop FROM tblUsers WHERE UserID = $1",[userID])
         if(rows.length == 0){
             res.status(404).json({"status":"error","message":"Could not find the user"})
         }else{
@@ -177,7 +180,7 @@ app.get("/points",async (req,res)=>{
 //DONE
 app.get("/leaderboard", async (req,res)=>{
     try{
-        const {rows} = await pool.query('SELECT tblUserPointTotals.pointtotal, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.userid = tblUsers.userID ORDER BY tblUserPointTotals.pointtotal DESC LIMIT 3')
+        const {rows} = await pool.query('SELECT tblUserPointTotals.point_total, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.user_id = tblUsers.user_id ORDER BY tblUserPointTotals.point_total DESC LIMIT 3')
         res.status(200).json({"leaderboard":rows})
     }catch (err){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
@@ -198,7 +201,7 @@ app.get("/leaderboard/topx", async (req,res)=>{
         if(topQueryParam <= 0){
             res.status(400).json({"status":"error","message":"Please provide a valid input"})
         }
-        const {rows} = await pool.query('SELECT tblUserPointTotals.pointtotal, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.userid = tblUsers.userID ORDER BY tblUserPointTotals.pointtotal DESC LIMIT $1',[topQueryParam])
+        const {rows} = await pool.query('SELECT tblUserPointTotals.point_total, tblUsers.username FROM tblUserPointTotals JOIN tblUsers on tblUserPointTotals.user_id = tblUsers.user_id ORDER BY tblUserPointTotals.point_total DESC LIMIT $1',[topQueryParam])
         res.status(200).json({"leaderboard":rows})
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
