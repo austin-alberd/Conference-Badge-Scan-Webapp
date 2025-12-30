@@ -81,12 +81,13 @@ app.post("/user",async (req,res)=>{
         let firstName = req.body.firstName
         let userPointValue = req.body.userPointValue
         let userID = uuidv4()
-        const _ = await pool.query("INSERT INTO tblUsers VALUES($1,$2,$3,$4,$5,$6)",[userID,username,password,troop,email,firstName])
+        const _ = await pool.query("INSERT INTO tblUsers VALUES($1,$2,$3,$4,$5,$6)",[userID,firstName,username,password,troop,email])
         const __ = await pool.query("INSERT INTO tblUserPointValues VALUES($1,$2,$3)",[uuidv4(),userID,userPointValue])
         const ___ = await pool.query("INSERT INTO tblUserPointTotals VALUES($1,$2,$3)",[uuidv4(),userID,0])
         res.status(201).json({"status":"success","message":"Successfully Added User"})
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+        console.log(e)
     }
 })
 
@@ -108,6 +109,17 @@ app.put("/user",async (req,res)=>{
 //TODO Create Route 
 app.get("/user",async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
+    try{
+        let userID = req.query.userID
+        const {rows} = await pool.query('SELECT * from tblUsers WHERE user_id = $1',[userID])
+        if(rows.length > 0 ){
+            res.status(200).json(rows[0])
+        }else{
+            res.status(404).json({"status":"failed","message":"Could not find user"})
+        }
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
 })
 
 /**
@@ -117,8 +129,15 @@ app.get("/user",async (req,res)=>{
 //TODO Create Route 
 app.post("/authenticate",async (req,res) =>{
     try{
-        let username = req.body.userName
+        let username = req.body.username
         let password = req.body.password
+        const {rows} = await pool.query('SELECT * from tblUsers WHERE username = $1',[username])
+        const passwordHash = rows[0]['password_hash']
+        if(bcrypt.compareSync(password,passwordHash,10)){
+            res.status(200).json({"status":"success"})
+        }else{
+            res.status(401).json({"status":"unauthorized"})
+        }
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
     }
