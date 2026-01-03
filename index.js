@@ -179,6 +179,25 @@ app.post("/points",async (req,res)=>{
 
     //Fix it all
     // UPDATE tblUserPoints SET PointTotal = newPoints WHERE UserID = UserID
+    try{
+        let scannedUserUserID = req.body.scannedUserUserID // Who got scanned gets passed in from the front end
+        let scanningUserUserID = req.body.scanningUserUserID // Who is scanning comes from JWT
+
+        //Get the Scanned User Point Values
+        let {rows} = await pool.query('SELECT point_value AS pv FROM tblUserPointValues WHERE user_id = $1 ',[scannedUserUserID])
+        let scannedUserPointValues = parseInt(rows[0].pv)
+
+        //Update the scanning user's point total
+        let response = await pool.query("UPDATE tblUserPointTotals SET point_total = point_total + $1 WHERE user_id = $2 ",[scannedUserPointValues,scanningUserUserID])
+        if(response.rowCount > 0){
+            res.status(200).json({"status":"success"})
+        }else{
+            res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+        }
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
+
 })
 
 /**
