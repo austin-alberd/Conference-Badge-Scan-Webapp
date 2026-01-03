@@ -4,14 +4,17 @@ const {v4:uuidv4} = require("uuid")
 const cors = require("cors")
 const bcrypt = require("bcrypt")
 const {Pool} = require('pg')
+const cookieParser = require("cookie-parser")
+const jwt = require("jsonwebtoken")
 
-
+var JWT_SECRET = "HelloWorld"
 // App setup
 const HTTP_PORT = 3000
 app = express()
 
 app.use(express.json())
 app.use(cors())
+app.use(cookieParser())
 
 
 //PG Pool
@@ -69,7 +72,7 @@ app.get("/user-home",async (req,res)=>{
  * POST /user
  * Creates a user in the database
  */
-//TODO Create Route 
+//DONE Create Route 
 app.post("/user",async (req,res)=>{
     // INSERT INTO tblUsers VALUES()
     try{
@@ -106,7 +109,7 @@ app.put("/user",async (req,res)=>{
  * Gets the details for the user tied to the JWT token
  * AUTH JWT
  */
-//TODO Create Route 
+//DONE Create Route 
 app.get("/user",async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
     try{
@@ -134,11 +137,14 @@ app.post("/authenticate",async (req,res) =>{
         const {rows} = await pool.query('SELECT * from tblUsers WHERE username = $1',[username])
         const passwordHash = rows[0]['password_hash']
         if(bcrypt.compareSync(password,passwordHash,10)){
-            res.status(200).json({"status":"success"})
+            // issue the JWT
+            const token = jwt.sign({"user_id":rows[0]['user_id'],"first_name":rows[0]['first_name'],"troop":rows[0]['troop'],"email":rows[0]['email']},JWT_SECRET)
+            return res.cookie("access_token",token,{httpOnly:true}).status(200).json({"status":"success","message":"Logged in successfully"})
         }else{
             res.status(401).json({"status":"unauthorized"})
         }
     }catch(e){
+        console.log(e)
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
     }
 })
@@ -169,7 +175,7 @@ app.get("/user/public", async (req,res)=>{
  * Adds points to the user who is scanning
  * Auth JWT
  */
-//TODO Create Route 
+//DONE Create Route 
 app.post("/points",async (req,res)=>{
     //Create a new updated points total
     //SELECT Points FROM tblUserPointValues
