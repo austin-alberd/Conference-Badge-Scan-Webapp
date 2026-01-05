@@ -1,3 +1,4 @@
 node_modules/
 .$ER Diagram.drawio.bkp
 swaggerDocs.yml
+.env
