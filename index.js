@@ -7,6 +7,8 @@ const {Pool} = require('pg')
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
 
+const authorization = require("./middleware/authorization")
+
 var JWT_SECRET = "HelloWorld"
 // App setup
 const HTTP_PORT = 3000
@@ -261,4 +263,8 @@ app.get("/leaderboard/topx", async (req,res)=>{
 app.get("/leaderboard/position", async (req,res)=>{
     //SELECT Username FROM tblUsers ORDER BY PointTotal
     //Itterate through all of that and output the count in the provided array to output everything
+})
+
+app.get("/test",authorization.authorization,(req,res)=>{
+    res.sendStatus(200)
 })
