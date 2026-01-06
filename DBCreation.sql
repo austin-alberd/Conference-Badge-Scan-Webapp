@@ -28,3 +28,13 @@ CREATE TABLE tblUserPointTotals (
         REFERENCES tblUsers(user_id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE tblPointRewardRecord(
+    reward_id VARCHAR(80) PRIMARY KEY,
+    scanned_user_id UUID,
+    scanning_user_id UUID,
+    points_exchanged INTEGER,
+
+    CONSTRAINT fk_scanned_user_id FOREIGN KEY (scanned_user_id) REFERENCES tblUsers(user_id) ON DELETE CASCADE,
+    CONSTRAINT fk_scanning_user_id FOREIGN KEY (scanning_user_id) REFERENCES tblUsers(user_id) ON DELETE CASCADE
+);
