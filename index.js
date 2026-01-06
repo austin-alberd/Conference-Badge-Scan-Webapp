@@ -198,7 +198,12 @@ app.post("/points",async (req,res)=>{
         //Update the scanning user's point total
         let response = await pool.query("UPDATE tblUserPointTotals SET point_total = point_total + $1 WHERE user_id = $2 ",[scannedUserPointValues,scanningUserUserID])
         if(response.rowCount > 0){
-            res.status(200).json({"status":"success"})
+            response = await pool.query("INSERT INTO tblPointRewardRecord VALUES($1,$2,$3,$4)", [scannedUserUserID+scanningUserUserID,scannedUserUserID,scanningUserUserID,scannedUserPointValues])
+            if(response.rowCount >0){
+                res.status(200).json({"status":"success","message":"Successfully added points to your total"})
+            }else{
+                res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+            }
         }else{
             res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
         }
