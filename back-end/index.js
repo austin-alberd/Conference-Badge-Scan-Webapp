@@ -6,10 +6,11 @@ const bcrypt = require("bcrypt")
 const {Pool} = require('pg')
 const cookieParser = require("cookie-parser")
 const jwt = require("jsonwebtoken")
-
+require("dotenv").config()
 const authorization = require("./middleware/authorization")
 
-var JWT_SECRET = "HelloWorld"
+//JWT Setup
+var JWT_SECRET = process.env.JWT_SECRET
 // App setup
 const HTTP_PORT = 3000
 app = express()
