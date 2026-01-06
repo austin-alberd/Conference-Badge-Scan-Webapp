@@ -131,7 +131,7 @@ app.get("/user",async (req,res)=>{
  * POST /authenticate
  * Logs the user in and issues a JWT
  */
-//TODO Create Route 
+//DONE Create Route 
 app.post("/authenticate",async (req,res) =>{
     try{
         let username = req.body.username
