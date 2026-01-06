@@ -112,10 +112,10 @@ app.put("/user",async (req,res)=>{
  * AUTH JWT
  */
 //DONE Create Route 
-app.get("/user",async (req,res)=>{
+app.get("/user",authorization.authorization,async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
     try{
-        let userID = req.query.userID
+        let userID = req.body.JWTUserID
         const {rows} = await pool.query('SELECT * from tblUsers WHERE user_id = $1',[userID])
         if(rows.length > 0 ){
             res.status(200).json(rows[0])
@@ -156,7 +156,7 @@ app.post("/authenticate",async (req,res) =>{
  * Gets the publicly available details of a user from the database (name, email, troop)
  * Auth JWT
  */
-//DONE
+//TODO Reconsider this route
 app.get("/user/public", async (req,res)=>{
     //
     try{
@@ -178,7 +178,7 @@ app.get("/user/public", async (req,res)=>{
  * Auth JWT
  */
 //DONE Create Route 
-app.post("/points",async (req,res)=>{
+app.post("/points",authorization.authorization,async (req,res)=>{
     //Create a new updated points total
     //SELECT Points FROM tblUserPointValues
 
@@ -189,7 +189,7 @@ app.post("/points",async (req,res)=>{
     // UPDATE tblUserPoints SET PointTotal = newPoints WHERE UserID = UserID
     try{
         let scannedUserUserID = req.body.scannedUserUserID // Who got scanned gets passed in from the front end
-        let scanningUserUserID = req.body.scanningUserUserID // Who is scanning comes from JWT
+        let scanningUserUserID = req.body.JWTUserID // Who is scanning comes from JWT
 
         //Get the Scanned User Point Values
         let {rows} = await pool.query('SELECT point_value AS pv FROM tblUserPointValues WHERE user_id = $1 ',[scannedUserUserID])
@@ -229,7 +229,7 @@ app.get("/points",async (req,res)=>{
  * Auth JWT
  */
 //DONE
-app.get("/leaderboard", async (req,res)=>{
+app.get("/leaderboard", authorization.authorization,async (req,res)=>{
     try{
         const {rows} = await pool.query('SELECT tblUserPointTotals.point_total, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.user_id = tblUsers.user_id ORDER BY tblUserPointTotals.point_total DESC LIMIT 3')
         res.status(200).json({"leaderboard":rows})
@@ -245,7 +245,7 @@ app.get("/leaderboard", async (req,res)=>{
  * Auth JWT
  */
 //DONE
-app.get("/leaderboard/topx", async (req,res)=>{
+app.get("/leaderboard/topx", authorization.authorization,async (req,res)=>{
     // SELECT tblUserPointTotals.pointtotal, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.userid = tblUsers.userID ORDER BY tblUserPointTotals.pointtotal DESC LIMIT 5 
     try{
         let topQueryParam = req.query.topx
@@ -271,5 +271,7 @@ app.get("/leaderboard/position", async (req,res)=>{
 })
 
 app.get("/test",authorization.authorization,(req,res)=>{
+
+    console.log(req.body.JWTUserID)
     res.sendStatus(200)
 })
