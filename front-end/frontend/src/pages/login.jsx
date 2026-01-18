@@ -5,6 +5,7 @@ import './login.css'
 function Login() {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
   const Navigate = useNavigate()
 
   const handleSubmit = async (e) =>{
@@ -19,8 +20,9 @@ function Login() {
         })
 
         if(res.ok){
-            Navigate("/somelink")
+            Navigate("/user-home")
         }else{
+            setError("Oh No! An error occourred please check your credentials.")
             console.log("error")
         }
     }catch(e){
@@ -40,6 +42,7 @@ function Login() {
                     <br></br><label htmlFor="password">Password</label>
                 </div>
                 <button type="submit" id="login_button">Login</button>
+                {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
             </form>
         </div>
     

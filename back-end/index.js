@@ -150,7 +150,7 @@ app.post("/authenticate",async (req,res) =>{
             const token = jwt.sign({"user_id":rows[0]['user_id'],"first_name":rows[0]['first_name'],"troop":rows[0]['troop'],"email":rows[0]['email']},JWT_SECRET)
             return res.cookie("access_token",token,{httpOnly:true,secure:true,sameSite:"none"}).status(200).json({"status":"success","message":"Logged in successfully"})
         }else{
-            res.status(401).json({"status":"unauthorized"})
+            res.status(401).json({"status":"unauthorized","message":"Your credentails are incorrect. Please make sure they are correctly typed in."})
         }
     }catch(e){
         console.log(e)
