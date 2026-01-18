@@ -16,7 +16,10 @@ const HTTP_PORT = 3000
 app = express()
 
 app.use(express.json())
-app.use(cors())
+app.use(cors({
+    origin:"http://localhost:5173",
+    credentials:true
+}))
 app.use(cookieParser())
 
 
@@ -145,7 +148,7 @@ app.post("/authenticate",async (req,res) =>{
         if(bcrypt.compareSync(password,passwordHash,10)){
             // issue the JWT
             const token = jwt.sign({"user_id":rows[0]['user_id'],"first_name":rows[0]['first_name'],"troop":rows[0]['troop'],"email":rows[0]['email']},JWT_SECRET)
-            return res.cookie("access_token",token,{httpOnly:true}).status(200).json({"status":"success","message":"Logged in successfully"})
+            return res.cookie("access_token",token,{httpOnly:true,secure:true,sameSite:"none"}).status(200).json({"status":"success","message":"Logged in successfully"})
         }else{
             res.status(401).json({"status":"unauthorized"})
         }
