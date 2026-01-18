@@ -281,3 +281,23 @@ app.get("/leaderboard/position", async (req,res)=>{
     //SELECT Username FROM tblUsers ORDER BY PointTotal
     //Itterate through all of that and output the count in the provided array to output everything
 })
+
+
+app.post("/authenticate/validate-cookie", (req,res)=>{
+    try{
+        const token = req.cookies.access_token
+        if(!token){
+            res.sendStatus(403)
+        }else{
+            jwt.verify(token,JWT_SECRET,(err, user)=>{
+                if(err){
+                    res.sendStatus(403)
+                }else{
+                    res.sendStatus(200)
+                }
+            })
+        }
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
+})
