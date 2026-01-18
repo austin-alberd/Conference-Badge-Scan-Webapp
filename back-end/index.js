@@ -81,6 +81,7 @@ app.get("/user-home",async (req,res)=>{
 app.post("/user",async (req,res)=>{
     // INSERT INTO tblUsers VALUES()
     try{
+        console.log(req.body)
         let username = req.body.username
         let password = req.body.password
         password = bcrypt.hashSync(password,10)
