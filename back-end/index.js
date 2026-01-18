@@ -23,10 +23,10 @@ app.use(cookieParser())
 //PG Pool
 const pool = new Pool({
   user: "postgres",
-  host: "localhost",
+  host: "127.0.0.1",
   password:"password",
   database: "postgres",
-  port: 5433
+  port: 5432
 });
 
 // test connection to the database
@@ -38,6 +38,7 @@ const pool = new Pool({
 
     } catch (err) {
         console.log(err.stack)
+        console.log(err)
         console.error("💀 [FATAL ERROR]: Could Not Connect to Database")
     }
 })()
@@ -46,6 +47,7 @@ const pool = new Pool({
 app.listen(HTTP_PORT,(err)=>{
     if(err){
         console.log(err.stack)
+        console.log(err)
         console.error("💀 [FATAL ERROR]: Could Not Start Web Server")
     }else{
         console.log(`✅ [SUCCESS]: Started Web Server On Port ${HTTP_PORT}`)
@@ -219,7 +221,7 @@ app.post("/points",authorization.authorization,async (req,res)=>{
  * Gets the total points for a user
  */
 //TODO Create Route 
-app.get("/points",async (req,res)=>{
+app.get("/points",authorization.authorization,async (req,res)=>{
     // SELECT Points from tblUserPoints WHERE UserID = UserID
     try{
         let {rows} = await pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[req.body.JWTUserID])
