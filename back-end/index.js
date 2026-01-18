@@ -37,16 +37,16 @@ const pool = new Pool({
         console.log(`✅ [SUCCESS]: Started Postgres Server and Using User:  ${currentUser}`)
 
     } catch (err) {
-        console.log("💀 [FATAL ERROR]: Could Not Connect to Database")
-        console.log(err.stack);
+        console.log(err.stack)
+        console.error("💀 [FATAL ERROR]: Could Not Connect to Database")
     }
 })()
 
 //Start the server
 app.listen(HTTP_PORT,(err)=>{
     if(err){
-        console.log("💀 [FATAL ERROR]: Could Not Start Web Server")
-        console.log(err)
+        console.log(err.stack)
+        console.error("💀 [FATAL ERROR]: Could Not Start Web Server")
     }else{
         console.log(`✅ [SUCCESS]: Started Web Server On Port ${HTTP_PORT}`)
     }
@@ -158,11 +158,11 @@ app.post("/authenticate",async (req,res) =>{
  * Auth JWT
  */
 //TODO Reconsider this route
-app.get("/user/public", async (req,res)=>{
+app.get("/user/public",authorization.authorization, async (req,res)=>{
     //
     try{
-        let userID = req.query.userid
-        const {rows} = await pool.query("SELECT first_name, email, troop FROM tblUsers WHERE UserID = $1",[userID])
+        let userID = req.query.username
+        const {rows} = await pool.query("SELECT first_name, email, troop FROM tblUsers WHERE username = $1",[userID])
         if(rows.length == 0){
             res.status(404).json({"status":"error","message":"Could not find the user"})
         }else{
@@ -221,7 +221,12 @@ app.post("/points",authorization.authorization,async (req,res)=>{
 //TODO Create Route 
 app.get("/points",async (req,res)=>{
     // SELECT Points from tblUserPoints WHERE UserID = UserID
-
+    try{
+        let {rows} = await pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[req.body.JWTUserID])
+        res.status(200).json({"status":"success","pointTotal":rows[0].pt})
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+    }
 })
 
 /**
@@ -269,10 +274,4 @@ app.get("/leaderboard/topx", authorization.authorization,async (req,res)=>{
 app.get("/leaderboard/position", async (req,res)=>{
     //SELECT Username FROM tblUsers ORDER BY PointTotal
     //Itterate through all of that and output the count in the provided array to output everything
-})
-
-app.get("/test",authorization.authorization,(req,res)=>{
-
-    console.log(req.body.JWTUserID)
-    res.sendStatus(200)
 })
