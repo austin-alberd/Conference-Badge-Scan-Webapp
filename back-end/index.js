@@ -29,7 +29,17 @@ const pool = new Pool({
   host: "127.0.0.1",
   password:"password",
   database: "postgres",
-  port: 5432
+  port: 5432,
+  max: 50,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 2000
+});
+
+process.on("SIGINT", async () => {
+  console.log("Closing PG pool...");
+  await pool.end();
+  console.log("PG pool closed, exiting process.");
+  process.exit(0);
 });
 
 // test connection to the database
@@ -58,22 +68,29 @@ app.listen(HTTP_PORT,(err)=>{
 })
 
 /**
- * GET /home
- * Gets the home page of the app
- */
-//TODO Create Route 
-app.get("/home",async (req,res)=>{
-
-})
-
-/**
- * GET /user-home
+ * GET /user-home-data
  * Gets the user's individual home page
  * Auth JWT
  */
 //TODO Create Route 
-app.get("/user-home",async (req,res)=>{
-    //Maybe database stuff
+app.get("/user-home-data",authorization.authorization,async (req,res)=>{
+    try{
+        const userID = req.jwtUserID
+        console.log(userID)
+        const [user, points, leaderboard] = await Promise.all([
+            pool.query("SELECT first_name, email, troop FROM tblUsers WHERE user_id = $1",[userID]),
+            pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[userID]),
+            await pool.query('SELECT tblUserPointTotals.point_total, tblUsers.username FROM tblUSerPointTotals JOIN tblUsers on tblUserPointTotals.user_id = tblUsers.user_id ORDER BY tblUserPointTotals.point_total DESC LIMIT 3')
+        ])
+        res.status(200).json({
+            "firstName":user.rows[0].first_name,
+            "pointTotal":points.rows[0].pt,
+            "leaderboard":leaderboard.rows
+        })
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+        console.log(e)
+    }
 })
 
 /**
@@ -84,7 +101,6 @@ app.get("/user-home",async (req,res)=>{
 app.post("/user",async (req,res)=>{
     // INSERT INTO tblUsers VALUES()
     try{
-        console.log(req.body)
         let username = req.body.username
         let password = req.body.password
         password = bcrypt.hashSync(password,10)
