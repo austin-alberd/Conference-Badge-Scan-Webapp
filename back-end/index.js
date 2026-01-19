@@ -76,7 +76,6 @@ app.listen(HTTP_PORT,(err)=>{
 app.get("/user-home-data",authorization.authorization,async (req,res)=>{
     try{
         const userID = req.jwtUserID
-        console.log(userID)
         const [user, points, leaderboard] = await Promise.all([
             pool.query("SELECT first_name, email, troop FROM tblUsers WHERE user_id = $1",[userID]),
             pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[userID]),
@@ -89,7 +88,6 @@ app.get("/user-home-data",authorization.authorization,async (req,res)=>{
         })
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
-        console.log(e)
     }
 })
 
@@ -115,7 +113,6 @@ app.post("/user",async (req,res)=>{
         res.status(201).json({"status":"success","message":"Successfully Added User"})
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
-        console.log(e)
     }
 })
 
@@ -139,14 +136,11 @@ app.get("/user",authorization.authorization,async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
     try{
         let userID = req.jwtUserID
-        console.log(userID)
         const {rows} = await pool.query('SELECT first_name, troop, username from tblUsers WHERE user_id = $1',[userID])
         if(rows.length > 0 ){
             res.status(200).json(rows[0])
-            console.log("Hit")
         }else{
             res.status(404).json({"status":"failed","message":"Could not find user"})
-            console.log(e)
         }
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
@@ -172,7 +166,6 @@ app.post("/authenticate",async (req,res) =>{
             res.status(401).json({"status":"unauthorized","message":"Your credentails are incorrect. Please make sure they are correctly typed in."})
         }
     }catch(e){
-        console.log(e)
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
     }
 })
@@ -312,6 +305,7 @@ app.post("/authenticate/validate-cookie", (req,res)=>{
                 if(err){
                     res.sendStatus(403)
                 }else{
+
                     res.sendStatus(200)
                 }
             })

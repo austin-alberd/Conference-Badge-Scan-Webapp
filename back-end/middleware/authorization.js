@@ -9,12 +9,10 @@ function authorization(req,res,next){
     if(!token){
         return res.sendStatus(403)
     }else{
-        console.log("Auth Middleware Hit")
         jwt.verify(token,JWT_SECRET,(err, user)=>{
             if(err){
                 return res.sendStatus(403)
             }else{
-                console.log("User Data From Middleware"+user.user_id)
                 req.jwtUserID = user.user_id
                 return next()
             }
