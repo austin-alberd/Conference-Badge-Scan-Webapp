@@ -1,0 +1,26 @@
+#footer-container{
+    display:flex;
+    justify-content: space-evenly;
+}
+
+.fl-container{
+    border:1px solid white;
+    width:100%;
+    padding:1em;
+    background-color: #003f87;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.fl-container:hover{
+    background-color: #004faa;
+}
+.fl-container a {
+    color:white;
+}
+
+.icon{
+    color:white;
+    margin-right:.4em;
+}

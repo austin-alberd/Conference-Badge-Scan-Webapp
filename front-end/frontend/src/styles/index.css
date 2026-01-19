@@ -60,3 +60,18 @@ h1, h2, h3 {
 p, ul, ol {
     margin-bottom: 1em;
 }
+
+html, body, #root {
+    height: 100%;
+    margin: 0;
+}
+
+.app{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+}
+
+.content{
+    flex:1;
+}

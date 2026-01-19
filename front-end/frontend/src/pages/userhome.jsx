@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import "./userhome.css"
+import Footer from "../components/footer"
 
 function UserHome(){
     const [firstName, setFirstName] = useState("NoName")
@@ -28,7 +29,8 @@ function UserHome(){
 
     return(
         <>
-            <div id="user-home-content">
+        <div className="app">
+            <div id="user-home-content" className="content">
                 <h1>Hello {firstName}</h1>
                 <p>You currently have {points} points</p>
                 <h2>Leaderboard</h2>
@@ -47,6 +49,8 @@ function UserHome(){
                 </table>
             </div>
 
+            <Footer/>
+        </div>
         </>
     )
 }
