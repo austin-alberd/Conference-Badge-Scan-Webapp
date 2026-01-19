@@ -122,10 +122,12 @@ app.put("/user",async (req,res)=>{
 app.get("/user",authorization.authorization,async (req,res)=>{
     // SELECT * FROM tblUsers WHERE UserID = 
     try{
-        let userID = req.body.JWTUserID
-        const {rows} = await pool.query('SELECT * from tblUsers WHERE user_id = $1',[userID])
+        let userID = req.jwtUserID
+        console.log(userID)
+        const {rows} = await pool.query('SELECT first_name, troop, username from tblUsers WHERE user_id = $1',[userID])
         if(rows.length > 0 ){
             res.status(200).json(rows[0])
+            console.log("Hit")
         }else{
             res.status(404).json({"status":"failed","message":"Could not find user"})
         }
@@ -196,7 +198,7 @@ app.post("/points",authorization.authorization,async (req,res)=>{
     // UPDATE tblUserPoints SET PointTotal = newPoints WHERE UserID = UserID
     try{
         let scannedUserUserID = req.body.scannedUserUserID // Who got scanned gets passed in from the front end
-        let scanningUserUserID = req.body.JWTUserID // Who is scanning comes from JWT
+        let scanningUserUserID = req.jwtUserID // Who is scanning comes from JWT
 
         //Get the Scanned User Point Values
         let {rows} = await pool.query('SELECT point_value AS pv FROM tblUserPointValues WHERE user_id = $1 ',[scannedUserUserID])
@@ -228,7 +230,7 @@ app.post("/points",authorization.authorization,async (req,res)=>{
 app.get("/points",authorization.authorization,async (req,res)=>{
     // SELECT Points from tblUserPoints WHERE UserID = UserID
     try{
-        let {rows} = await pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[req.body.JWTUserID])
+        let {rows} = await pool.query('SELECT point_total AS pt FROM tblUserPointTotals WHERE user_id = $1 ',[req.jwtUserID])
         res.status(200).json({"status":"success","pointTotal":rows[0].pt})
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
