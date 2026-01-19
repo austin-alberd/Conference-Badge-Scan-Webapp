@@ -1,0 +1,23 @@
+#leaderboardTable tr:nth-child(even){
+    background-color:#D6EEEE ;
+}
+
+.tableHeader{
+    background-color: #CE1126;
+    color:white;
+    padding:1em;
+}
+
+#leaderboardTable td{
+    padding:0.5em;
+}
+
+#leaderboardTable{
+    max-width: 50%;
+    min-width:25%;
+}
+#user-home-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -18,7 +18,6 @@ function UserHome(){
 
                     return response.json()
                 }).then(data =>{
-                    console.log(data)
                     setFirstName(data.firstName)
                     setPoints(data.pointTotal)
                     setLeaderBoard(data.leaderboard)
@@ -29,16 +28,25 @@ function UserHome(){
 
     return(
         <>
-            <h1>Hello {firstName}</h1>
-            <p>You currently have {points} points</p>
-            <h2>Leaderboard</h2>
-            <ul>
-                {leaderboard.map(item=>(
-                    <li key={item.username}>
-                        {item.username} - {item.point_total}
-                    </li>
-                ))}
-            </ul>
+            <div id="user-home-content">
+                <h1>Hello {firstName}</h1>
+                <p>You currently have {points} points</p>
+                <h2>Leaderboard</h2>
+
+                <table id="leaderboardTable">
+                    <tr>
+                        <th className="tableHeader">Username</th>
+                        <th className="tableHeader">Points</th>
+                    </tr>
+                    {leaderboard.map(item=>(
+                        <tr key={item.username}>
+                            <td>{item.username}</td>
+                            <td>{item.point_total}</td>
+                        </tr>
+                    ))}
+                </table>
+            </div>
+
         </>
     )
 }
