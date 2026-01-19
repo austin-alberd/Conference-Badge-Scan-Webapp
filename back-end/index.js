@@ -130,6 +130,7 @@ app.get("/user",authorization.authorization,async (req,res)=>{
             console.log("Hit")
         }else{
             res.status(404).json({"status":"failed","message":"Could not find user"})
+            console.log(e)
         }
     }catch(e){
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
@@ -224,7 +225,7 @@ app.post("/points",authorization.authorization,async (req,res)=>{
 
 /**
  * GET /points
- * Gets the total points for a user
+ * Gets the total points for a user JWT
  */
 //TODO Create Route 
 app.get("/points",authorization.authorization,async (req,res)=>{
