@@ -1,5 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom" 
+import {useEffect} from "react"
 
 import './login.css'
 function Login() {
@@ -8,9 +9,24 @@ function Login() {
   const [error, setError] = useState("")
   const Navigate = useNavigate()
 
+  useEffect(()=>{
+    const AuthPreCheck = async ()=>{
+        try{
+            const authPreCheck = await fetch("http://localhost:3000/authenticate/validate-cookie",{
+                method:"POST",
+                credentials:"include"
+            })
+            if(authPreCheck.ok){
+                Navigate("/user-home")
+            }
+        }catch(e){
+            console.log("An error has occoured in Auth pre check")
+        }
+    }
+    AuthPreCheck()
+  },[])
   const handleSubmit = async (e) =>{
     e.preventDefault()
-
     try{
         const res = await fetch("http://localhost:3000/authenticate",{
             method: "POST",
@@ -22,7 +38,7 @@ function Login() {
         if(res.ok){
             Navigate("/user-home")
         }else{
-            setError("Oh No! An error occourred please check your credentials.")
+            setError("Oh No! An error occoured please check your credentials.")
             console.log("error")
         }
     }catch(e){
