@@ -4,7 +4,12 @@ import { useAuth } from "./AuthContext"
 
 const ProtectedRoutes = () =>{
     const [isAuth,setIsAuth] = useState(null)
+<<<<<<< HEAD
     const { setUserId } = useAuth()
+=======
+
+    // Check and make sure the user's cookie is valid and they are able to log in
+>>>>>>> 378a383de2f2d7d1ca5ccbcb3668394836d31ffb
     useEffect(()=>{
         const check_session = async () =>{
             try{

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import "./userhome.css"
+import QrCode from "react-qr-code"
 import Footer from "../components/footer"
 import { useAuth } from "../utils/AuthContext"
 
@@ -10,6 +11,7 @@ function UserHome(){
     const [uid, setUID] = useState("")
     const { userId } = useAuth()
 
+    // Gets the data to build the home page for the user
     useEffect(()=>{
             const get_data = async ()=>{
                 const res = await fetch("http://localhost:3000/user-home-data",{
@@ -52,6 +54,9 @@ function UserHome(){
                         </tr>
                     ))}
                 </table>
+                
+                <h2>Your QR Code</h2>
+                <QrCode id="qr-code" value="hey"/>
             </div>
             <Footer/>
         </div>
