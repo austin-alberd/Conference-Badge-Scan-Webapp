@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 const ProtectedRoutes = () =>{
     const [isAuth,setIsAuth] = useState(null)
 
+    // Check and make sure the user's cookie is valid and they are able to log in
     useEffect(()=>{
         const check_session = async () =>{
             try{

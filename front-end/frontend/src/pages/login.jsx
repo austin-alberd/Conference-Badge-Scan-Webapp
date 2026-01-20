@@ -9,6 +9,7 @@ function Login() {
   const [error, setError] = useState("")
   const Navigate = useNavigate()
 
+  // Check if the user is already logged in. If so it will route them around the login page
   useEffect(()=>{
     const AuthPreCheck = async ()=>{
         try{
@@ -25,6 +26,8 @@ function Login() {
     }
     AuthPreCheck()
   },[])
+
+  //Form submission 
   const handleSubmit = async (e) =>{
     e.preventDefault()
     try{
