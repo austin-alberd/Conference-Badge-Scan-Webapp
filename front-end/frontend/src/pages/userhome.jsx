@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react"
 import "./userhome.css"
 import Footer from "../components/footer"
+import { useAuth } from "../utils/AuthContext"
 
 function UserHome(){
     const [firstName, setFirstName] = useState("NoName")
     const [points, setPoints] = useState("0")
     const [leaderboard, setLeaderBoard] = useState([])
+    const [uid, setUID] = useState("")
+    const { userId } = useAuth()
 
     useEffect(()=>{
             const get_data = async ()=>{
@@ -23,6 +26,8 @@ function UserHome(){
                     setPoints(data.pointTotal)
                     setLeaderBoard(data.leaderboard)
                 })
+
+                
             }
             get_data()
     },[])
@@ -48,7 +53,6 @@ function UserHome(){
                     ))}
                 </table>
             </div>
-
             <Footer/>
         </div>
         </>
