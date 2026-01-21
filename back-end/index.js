@@ -314,3 +314,13 @@ app.post("/authenticate/validate-cookie", (req,res)=>{
         res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
     }
 })
+
+app.get("/logout", (req,res)=>{
+    try{
+        res.clearCookie("access_token",{httpOnly:true,secure:true,sameSite:"none"})
+        
+    }catch(e){
+        res.status(500).json({"status":"error","message":"Oh No! An Error Has Occurred Please Contact an App Administrator"})
+        console.log(e)
+    }
+})
