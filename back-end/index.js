@@ -305,8 +305,7 @@ app.post("/authenticate/validate-cookie", (req,res)=>{
                 if(err){
                     res.sendStatus(403)
                 }else{
-
-                    res.sendStatus(200)
+                    res.status(200).json({"user_id":user.user_id})
                 }
             })
         }

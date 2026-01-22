@@ -2,11 +2,14 @@ import { useEffect, useState } from "react"
 import "./userhome.css"
 import QrCode from "react-qr-code"
 import Footer from "../components/footer"
+import { useAuth } from "../utils/AuthContext"
 
 function UserHome(){
     const [firstName, setFirstName] = useState("NoName")
     const [points, setPoints] = useState("0")
     const [leaderboard, setLeaderBoard] = useState([])
+    const [uid, setUID] = useState("")
+    const { userId } = useAuth()
 
     // Gets the data to build the home page for the user
     useEffect(()=>{
@@ -25,6 +28,8 @@ function UserHome(){
                     setPoints(data.pointTotal)
                     setLeaderBoard(data.leaderboard)
                 })
+
+                
             }
             get_data()
     },[])
@@ -53,7 +58,6 @@ function UserHome(){
                 <h2>Your QR Code</h2>
                 <QrCode id="qr-code" value="hey"/>
             </div>
-
             <Footer/>
         </div>
         </>
